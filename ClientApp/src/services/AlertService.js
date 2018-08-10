@@ -11,7 +11,7 @@ export class AlertService extends React.Component {
         this.options = {
             position: 'top-right',
             effect: 'jelly',
-            timeout: 5000
+            timeout: 1000
         }
     }
 

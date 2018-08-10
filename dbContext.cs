@@ -11,9 +11,9 @@ namespace ToDo
 
         public DbSet<ToDoItem> ToDoItems { get; set; }
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            //modelBuilder.Entity<ToDoItem>().ToTable("ToDoItems");
+            optionsBuilder.UseSqlite("Filename=./ToDo.db");
         }
     }
 }

@@ -33,7 +33,7 @@ namespace react.Controllers
         public List<ToDoItem> Get()
         {
             _logger.LogInformation("Get all todo items");
-            List<ToDoItem> items = _context.ToDoItems.ToList();
+            List<ToDoItem> items = _context.ToDoItems.Where(x => !x.IsDeleted).ToList();
             return items;
         }
 
@@ -43,13 +43,24 @@ namespace react.Controllers
         /// <param name="items"></param>
         /// <returns></returns>
         [HttpPost("[action]")]
-        public IActionResult Save([FromBody] List<ToDoItem> items)
+        public IActionResult Save([FromBody] ToDoItem item)
         {
-            _logger.LogInformation("Save all todo items");
+            _logger.LogInformation(string.Format(item.Name, item.Id, "Save item {0}({1})"));
+            return UpdateItem(item);
+        }
 
+        [HttpPost("[action]")]
+        public IActionResult Delete([FromBody] ToDoItem item)
+        {
+            _logger.LogInformation(string.Format(item.Name, item.Id, "Delete item {0}({1})"));
+            return UpdateItem(item);
+        }
+
+        private IActionResult UpdateItem(ToDoItem item)
+        {
             try
             {
-                _context.UpdateRange(items);
+                _context.Update(item);
                 _context.SaveChanges();
             }
             catch (Exception ex)

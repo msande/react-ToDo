@@ -5,6 +5,7 @@ import { Home } from './components/Home';
 import { ToDo } from './components/ToDo';
 import { AlertService } from './services/AlertService';
 import { NotificationService } from './services/NotificationService';
+import './App.min.css';
 
 const notificationService = new NotificationService();
 

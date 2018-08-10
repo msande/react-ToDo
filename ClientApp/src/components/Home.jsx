@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import '../App.min.css';
 
 export class Home extends Component {
     displayName = Home.name
@@ -8,7 +7,7 @@ export class Home extends Component {
         return (
             <div>
                 <h1>Hello</h1>
-                <p class="sub-title">and welcome to the over complex react ToDo checklist</p>
+                <p className="sub-title">and welcome to the over complex ToDo react app</p>
                 <p>What this project includes:</p>
                 <ul>
                     <li>ASP.NET Core and C# for cross-platform server-side code</li>
@@ -21,6 +20,7 @@ export class Home extends Component {
 
                 ToDo:
                 <ul>
+                    <li>Make http service return promises</li>
                     <li>OAuth</li>
                     <li>SASS / style</li>
                     <li>Edit/Delete ToDoItems</li>
@@ -28,6 +28,9 @@ export class Home extends Component {
                     <li>Add date/time picker</li>
                     <li>Comment code(js, c#)</li>
                     <li>Unit testing(C# and js)</li>
+                    <li>Get working on old ie</li>
+                    <li>Reorder items</li>
+                    <li>Publish the site</li>
                     <li>___</li>
                 </ul>
             </div>

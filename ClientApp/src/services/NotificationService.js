@@ -1,15 +1,29 @@
 
 export class NotificationService {
-    
+
+    isBrowserNotificationSupported() {
+
+        if (!("Notification" in window)) {
+            // Browser notifications not allowed. Do nothing.
+            return false;
+        }
+        return true;
+    }
+
     requestPermission() {
+
+        if (!this.isBrowserNotificationSupported()) {
+            return false;
+        }
+
         Notification.requestPermission(
             (permission) => { }
         )
     }
 
     notify(message) {
-        if (!("Notification" in window)) {
-            // Browser notifications not allowed. Do nothing.
+
+        if (!this.isBrowserNotificationSupported()) {
             return false;
         }
 

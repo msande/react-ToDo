@@ -2,11 +2,8 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
-using System;
 using ToDo;
 
 namespace react
@@ -24,23 +21,15 @@ namespace react
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddEntityFrameworkSqlite().AddDbContext<dbContext>();
+            services.AddScoped<dbContext>(); //todo: needed?
+            services.AddScoped<Service.Service>(); //todo: needed?
 
-            services.AddScoped<dbContext>();
-            services.AddScoped<Service.Service>();
-            
             // In production, the React files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
             {
                 configuration.RootPath = "ClientApp/build";
             });
-
-            services.AddDbContextPool<dbContext>(
-                options => options.UseMySql(Configuration.GetConnectionString("DefaultConnection"),
-                    mysqlOptions =>
-                    {
-                        mysqlOptions.ServerVersion(new Version(8, 0, 12), ServerType.MySql);
-                    }
-            ));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
