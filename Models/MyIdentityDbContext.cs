@@ -1,8 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using ToDo.Models;
 
-namespace ToDo
+namespace ToDo.Models
 {
     public class MyIdentityDbContext : IdentityDbContext<MyIdentityUser, MyIdentityRole, string>
     {

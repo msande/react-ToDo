@@ -1,8 +1,6 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore;
-using ToDo.Models;
+﻿using Microsoft.EntityFrameworkCore;
 
-namespace ToDo
+namespace ToDo.Models
 {
     public class ApplicationDbContext : DbContext
     {

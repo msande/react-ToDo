@@ -1,5 +1,4 @@
-using System;
-using ToDo;
+using ToDo.Models;
 
 namespace ToDo.Service
 {
