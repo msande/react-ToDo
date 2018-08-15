@@ -24,19 +24,30 @@ export class ToDo extends React.Component {
     }
 
     async load() {
-        await fetch('api/ToDo/GetItems')
-            .then(response => response.json())
+
+        let headers = new Headers();
+        headers.set('Authorization', `Bearer ${sessionStorage.getItem('JWT')}`);
+        headers.set('Accept', 'application/json');
+        headers.set('Content-Type', 'application/json');
+
+        await fetch('api/ToDo/GetItems', {
+            headers: headers
+        }).then(response => response.json())
             .then(data => {
                 this.setState({ todoItems: data, loading: false });
             });
     }
 
     async save(finditem) {
+
+        let headers = new Headers();
+        headers.set('Authorization', `Bearer ${sessionStorage.getItem('JWT')}`);
+        headers.set('Accept', 'application/json');
+        headers.set('Content-Type', 'application/json');
+        debugger;
         await fetch('api/ToDo/Save', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
+            headers: headers,
             body: JSON.stringify(finditem)
         }).then((response) => {
             if (response.status === 200) {
@@ -52,11 +63,14 @@ export class ToDo extends React.Component {
         let finditem = this.state.todoItems.find(x => x.id === item.id);
         finditem.isDeleted = true;
 
+        let headers = new Headers();
+        headers.set('Authorization', `Bearer ${sessionStorage.getItem('JWT')}`);
+        headers.set('Accept', 'application/json');
+        headers.set('Content-Type', 'application/json');
+
         fetch('api/ToDo/Delete', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
+            headers: headers,
             body: JSON.stringify(item)
         }).then((response) => {
             if (response.status === 200) {
@@ -108,7 +122,7 @@ export class ToDo extends React.Component {
                             />
                             <span className="item-delete" onClick={this.delete.bind(this, item)}>X</span>
                         </div>
-                )}
+                    )}
                 </div>
             </div>
         )

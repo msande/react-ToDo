@@ -20,6 +20,7 @@ export class Home extends Component {
 
                 ToDo:
                 <ul>
+                    <li>Make http calls into service: https://github.com/bradymholt/aspnet-core-react-template/blob/master/client-react/services/RestUtilities.ts </li>
                     <li>OAuth</li>
                     <li>SASS / style</li>
                     <li>Edit/Delete ToDoItems</li>

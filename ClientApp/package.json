@@ -10,6 +10,7 @@
     },
     "dependencies": {
         "bootstrap": "^3.3.7",
+        "jwt-decode": "^2.2.0",
         "react": "^16.4.2",
         "react-bootstrap": "^0.32.1",
         "react-dom": "^16.4.2",
