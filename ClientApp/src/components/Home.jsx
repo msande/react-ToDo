@@ -20,7 +20,6 @@ export class Home extends Component {
 
                 ToDo:
                 <ul>
-                    <li>Make http service return promises</li>
                     <li>OAuth</li>
                     <li>SASS / style</li>
                     <li>Edit/Delete ToDoItems</li>
@@ -30,7 +29,7 @@ export class Home extends Component {
                     <li>Unit testing(C# and js)</li>
                     <li>Get working on old ie</li>
                     <li>Reorder items</li>
-                    <li>Publish the site</li>
+                    <li>Clean up C# namespaces</li>
                     <li>___</li>
                 </ul>
             </div>

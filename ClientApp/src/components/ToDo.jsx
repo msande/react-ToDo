@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { AlertService } from '../services/AlertService';
 import { NotificationService } from '../services/NotificationService';
+import { v4 } from 'uuid';
 
 const alertService = new AlertService();
 const notificationService = new NotificationService();
@@ -10,33 +11,28 @@ export class ToDo extends React.Component {
 
     constructor(props) {
         super(props);
-        
+
         this.state = { todoItems: [], loading: true };
+        this.add = this.add.bind(this);
         this.load();
     }
 
-    load() {
-        fetch('api/ToDo/Get')
+    add() {
+        let newGuid = v4();
+        this.state.todoItems = [...this.state.todoItems, { id: newGuid, name: '' }];
+        this.setState({ todoItems: this.state.todoItems });
+    }
+
+    async load() {
+        await fetch('api/ToDo/GetItems')
             .then(response => response.json())
             .then(data => {
                 this.setState({ todoItems: data, loading: false });
             });
     }
-    
-    handleBlur(event) {
 
-        let finditem = this.state.todoItems.find(x => x.id === event.currentTarget.id);
-        let newName = String.prototype.trim.call(event.currentTarget.value);
-
-        if (finditem.name === newName) {
-            return;
-        }
-
-        finditem.name = newName;
-
-        
-
-        fetch('api/ToDo/Save', {
+    async save(finditem) {
+        await fetch('api/ToDo/Save', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -45,16 +41,11 @@ export class ToDo extends React.Component {
         }).then((response) => {
             if (response.status === 200) {
                 alertService.save('Saved');
-
                 this.setState({ todoItems: this.state.todoItems });
             } else {
                 alertService.error('Sorry, an error occurred.');
             }
         });
-    }
-
-    handleFocus(event) {
-        event.target.select();
     }
 
     delete(item) {
@@ -74,7 +65,7 @@ export class ToDo extends React.Component {
                 let index = this.state.todoItems.map(x => x.id).indexOf(item.id);
                 console.log(this.state.todoItems);
                 this.state.todoItems.splice(index, 1)
-                
+
                 this.setState({ todoItems: this.state.todoItems });
             } else {
                 alertService.error('Sorry, an error occurred.');
@@ -82,18 +73,42 @@ export class ToDo extends React.Component {
         });
     }
 
+    async handleBlur(event) {
+
+        let finditem = this.state.todoItems.find(x => x.id === event.currentTarget.id);
+        let newName = String.prototype.trim.call(event.currentTarget.value);
+
+        if (finditem.name === newName) {
+            return;
+        }
+
+        finditem.name = newName;
+
+        await this.save(finditem);
+    }
+
+    handleFocus(event) {
+        event.target.select();
+    }
+
     renderItems = (todoItems) => {
         return (
             <div className="todo-items">
+                <button onClick={this.add}>add</button>
                 <div>
                     {todoItems.map((item) =>
                         <div className="item" key={item.id}>
-                            <input id={item.id} type="text" defaultValue={item.name}
+                            <input
+                                id={item.id}
+                                type="text"
+                                defaultValue={item.name}
                                 onBlur={this.handleBlur.bind(this)}
-                                onFocus={this.handleFocus.bind(this)}/>
+                                onFocus={this.handleFocus.bind(this)}
+                                autoFocus="true"
+                            />
                             <span className="item-delete" onClick={this.delete.bind(this, item)}>X</span>
                         </div>
-                    )}
+                )}
                 </div>
             </div>
         )

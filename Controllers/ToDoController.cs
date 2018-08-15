@@ -4,14 +4,14 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using ToDo;
+using ToDo.Models;
 
-namespace react.Controllers
+namespace ToDo.Controllers
 {
     [Route("api/[controller]")]
     public class ToDoController : Controller
     {
-        private readonly dbContext _context;
+        private readonly ApplicationDbContext _context;
         private readonly ILogger<ToDoController> _logger;
 
         /// <summary>
@@ -19,7 +19,7 @@ namespace react.Controllers
         /// </summary>
         /// <param name="context"></param>
         /// <param name="logger"></param>
-        public ToDoController(dbContext context, ILogger<ToDoController> logger)
+        public ToDoController(ApplicationDbContext context, ILogger<ToDoController> logger)
         {
             _context = context;
             _logger = logger;
@@ -30,10 +30,13 @@ namespace react.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet("[action]")]
-        public List<ToDoItem> Get()
+        public List<ToDoItem> GetItems()
         {
             _logger.LogInformation("Get all todo items");
-            List<ToDoItem> items = _context.ToDoItems.Where(x => !x.IsDeleted).ToList();
+            List<ToDoItem> items = _context.ToDoItems
+                .Where(x => !x.IsDeleted)
+                .OrderBy(x => x.SortOrder)
+                .ToList();
             return items;
         }
 
@@ -46,21 +49,42 @@ namespace react.Controllers
         public IActionResult Save([FromBody] ToDoItem item)
         {
             _logger.LogInformation(string.Format(item.Name, item.Id, "Save item {0}({1})"));
-            return UpdateItem(item);
+            return UpsertItem(item);
         }
 
+        /// <summary>
+        /// Delete an item
+        /// </summary>
+        /// <param name="item"></param>
+        /// <returns></returns>
         [HttpPost("[action]")]
         public IActionResult Delete([FromBody] ToDoItem item)
         {
             _logger.LogInformation(string.Format(item.Name, item.Id, "Delete item {0}({1})"));
-            return UpdateItem(item);
+            item.SortOrder = -1;
+            return UpsertItem(item);
         }
 
-        private IActionResult UpdateItem(ToDoItem item)
+        /// <summary>
+        /// Update/Insert an item
+        /// </summary>
+        /// <param name="item"></param>
+        /// <returns></returns>
+        private IActionResult UpsertItem(ToDoItem item)
         {
-            try
+            if (_context.ToDoItems.Any(x => x.Id == item.Id))
             {
                 _context.Update(item);
+            }
+            else
+            {
+                item.SortOrder = _context.ToDoItems.Count();
+                _context.Add(item);
+            }
+
+            try
+            {
+
                 _context.SaveChanges();
             }
             catch (Exception ex)

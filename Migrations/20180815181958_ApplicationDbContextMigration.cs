@@ -2,7 +2,7 @@
 
 namespace reacttodo.Migrations
 {
-    public partial class InitialCreate : Migration
+    public partial class ApplicationDbContextMigration : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -12,6 +12,7 @@ namespace reacttodo.Migrations
                 {
                     Id = table.Column<string>(nullable: false),
                     Name = table.Column<string>(nullable: true),
+                    SortOrder = table.Column<int>(nullable: false),
                     IsDeleted = table.Column<bool>(nullable: false)
                 },
                 constraints: table =>

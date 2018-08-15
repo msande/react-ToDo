@@ -1,13 +1,13 @@
 using System;
 using ToDo;
 
-namespace react.Service
+namespace ToDo.Service
 {
     public class Service
     {
-        private readonly dbContext _context;
+        private readonly ApplicationDbContext _context;
 
-        public Service(dbContext context)
+        public Service(ApplicationDbContext context)
         {
             _context = context;
         }

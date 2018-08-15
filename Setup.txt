@@ -1,0 +1,5 @@
+dotnet build
+dotnet ef migrations add ApplicationDbContextMigration --context ApplicationDbContext
+dotnet ef database update --context ApplicationDbContext
+dotnet ef migrations add MyIdentityDbContextMigration --context MyIdentityDbContext
+dotnet ef database update --context MyIdentityDbContext

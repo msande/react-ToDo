@@ -7,9 +7,9 @@ using ToDo;
 
 namespace reacttodo.Migrations
 {
-    [DbContext(typeof(dbContext))]
-    [Migration("20180810010608_InitialCreate")]
-    partial class InitialCreate
+    [DbContext(typeof(ApplicationDbContext))]
+    [Migration("20180815181958_ApplicationDbContextMigration")]
+    partial class ApplicationDbContextMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -17,7 +17,7 @@ namespace reacttodo.Migrations
             modelBuilder
                 .HasAnnotation("ProductVersion", "2.1.1-rtm-30846");
 
-            modelBuilder.Entity("ToDo.ToDoItem", b =>
+            modelBuilder.Entity("ToDo.Models.ToDoItem", b =>
                 {
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd();
@@ -25,6 +25,8 @@ namespace reacttodo.Migrations
                     b.Property<bool>("IsDeleted");
 
                     b.Property<string>("Name");
+
+                    b.Property<int>("SortOrder");
 
                     b.HasKey("Id");
 

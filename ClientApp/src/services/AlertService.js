@@ -9,7 +9,7 @@ export class AlertService extends React.Component {
         super(props);
 
         this.options = {
-            position: 'top-right',
+            position: 'bottom-right',
             effect: 'jelly',
             timeout: 1000
         }

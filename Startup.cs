@@ -1,12 +1,13 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using ToDo;
+using ToDo.Models;
 
-namespace react
+namespace ToDo
 {
     public class Startup
     {
@@ -21,9 +22,13 @@ namespace react
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
-            services.AddEntityFrameworkSqlite().AddDbContext<dbContext>();
-            services.AddScoped<dbContext>(); //todo: needed?
+            services.AddEntityFrameworkSqlite().AddDbContext<ApplicationDbContext>();
+            services.AddEntityFrameworkSqlite().AddDbContext<MyIdentityDbContext>();
+            services.AddScoped<ApplicationDbContext>(); //todo: needed?
+            services.AddScoped<MyIdentityDbContext>();
             services.AddScoped<Service.Service>(); //todo: needed?
+
+            services.AddIdentity<MyIdentityUser, MyIdentityRole>().AddEntityFrameworkStores<MyIdentityDbContext>().AddDefaultTokenProviders();
 
             // In production, the React files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
@@ -33,7 +38,10 @@ namespace react
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app,
+            IHostingEnvironment env,
+            UserManager<MyIdentityUser> userManager,
+            RoleManager<MyIdentityRole> roleManager)
         {
             if (env.IsDevelopment())
             {
@@ -44,6 +52,10 @@ namespace react
                 app.UseExceptionHandler("/Error");
                 app.UseHsts();
             }
+
+            app.UseAuthentication();
+
+            MyIdentityDataInitializer.SeedData(userManager, roleManager);
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
