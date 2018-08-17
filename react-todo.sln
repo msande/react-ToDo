@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27703.2035
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "react-todo", "react-todo\react-todo.csproj", "{5D579869-8F4C-497F-ACCF-2AF9DE224BAB}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5D579869-8F4C-497F-ACCF-2AF9DE224BAB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5D579869-8F4C-497F-ACCF-2AF9DE224BAB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5D579869-8F4C-497F-ACCF-2AF9DE224BAB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5D579869-8F4C-497F-ACCF-2AF9DE224BAB}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {751A7843-1934-4821-80C9-B3310F5D785E}
+	EndGlobalSection
+EndGlobal
