@@ -25,8 +25,7 @@ export class UserForm extends Component {
     handleSubmit = async event => {
         this.props.handleSubmit(event, this.state);
     }
-
-
+    
     render() {
         return (
             <div className={this.props.type}>
@@ -53,7 +52,7 @@ export class UserForm extends Component {
                         bsSize="large"
                         disabled={!this.validateForm()}
                         type="submit">
-                        Login
+                        {this.props.type}
                     </Button>
                     {this.props.type === 'Login' ? <Link to={'/register'}>Register</Link> : ''}
                 </form>
