@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 using Microsoft.Extensions.Configuration;
@@ -26,12 +27,10 @@ namespace ToDo
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             services.AddEntityFrameworkSqlite().AddDbContext<ApplicationDbContext>();
-            services.AddEntityFrameworkSqlite().AddDbContext<MyIdentityDbContext>();
             services.AddScoped<ApplicationDbContext>(); //todo: needed?
-            services.AddScoped<MyIdentityDbContext>();
             services.AddScoped<Service.Service>(); //todo: needed?
 
-            services.AddIdentity<MyIdentityUser, MyIdentityRole>().AddEntityFrameworkStores<MyIdentityDbContext>().AddDefaultTokenProviders();
+            services.AddIdentity<IdentityUser, IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
 
             services.AddAuthentication(options =>
             {
@@ -64,8 +63,8 @@ namespace ToDo
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app,
             IHostingEnvironment env,
-            UserManager<MyIdentityUser> userManager,
-            RoleManager<MyIdentityRole> roleManager)
+            UserManager<IdentityUser> userManager,
+            RoleManager<IdentityRole> roleManager)
         {
             if (env.IsDevelopment())
             {
@@ -79,7 +78,7 @@ namespace ToDo
 
             app.UseAuthentication();
 
-            MyIdentityDataInitializer.SeedData(userManager, roleManager);
+            IdentityDataInitializer.SeedData(roleManager, userManager);
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();

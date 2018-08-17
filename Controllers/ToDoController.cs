@@ -9,7 +9,7 @@ using ToDo.Models;
 
 namespace ToDo.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "User")]
     [Route("api/[controller]")]
     public class ToDoController : Controller
     {

@@ -1,29 +1,39 @@
 import React, { Component } from 'react';
-import { Route } from 'react-router';
+import { Route, Redirect, Switch } from 'react-router-dom';
 import { Layout } from './components/Layout';
-import { Home } from './components/Home';
 import { Login } from './components/Login';
+import { Register } from './components/Register';
+import { About } from './components/About';
 import { ToDo } from './components/ToDo';
 import { AlertService } from './services/AlertService';
 import { NotificationService } from './services/NotificationService';
 import './App.min.css';
+import PrivateRoute from './components/PrivateRoute';
+import { UserForm } from './components/UserForm';
 
 const notificationService = new NotificationService();
 
 export default class App extends Component {
-    displayName = App.name
+    displayName = App.name;
 
     constructor(props) {
         super(props);
+
         notificationService.requestPermission();
     }
 
     render() {
         return (
             <Layout>
-                <Route exact path='/' component={Home} />
-                <Route exact path='/login' component={Login} />
-                <Route path='/todo' component={ToDo} />
+                <Switch>
+                    <Route exact path='/login' component={Login} />
+                    <Route exact path='/register' component={Register} />
+                    <PrivateRoute path='/about' component={About} />
+                    <PrivateRoute path='/todo' component={ToDo} />
+                    <Route exact path="/" render={() => (
+                        <Redirect to="/about" />
+                    )} />
+                </Switch>
                 <AlertService />
             </Layout>
         );

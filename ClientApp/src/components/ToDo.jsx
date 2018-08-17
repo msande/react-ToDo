@@ -3,7 +3,6 @@ import { AlertService } from '../services/AlertService';
 import { NotificationService } from '../services/NotificationService';
 import { v4 } from 'uuid';
 
-const alertService = new AlertService();
 const notificationService = new NotificationService();
 
 export class ToDo extends React.Component {
@@ -33,9 +32,9 @@ export class ToDo extends React.Component {
         await fetch('api/ToDo/GetItems', {
             headers: headers
         }).then(response => response.json())
-            .then(data => {
-                this.setState({ todoItems: data, loading: false });
-            });
+        .then(data => {
+            this.setState({ todoItems: data, loading: false });
+        });
     }
 
     async save(finditem) {
@@ -51,10 +50,10 @@ export class ToDo extends React.Component {
             body: JSON.stringify(finditem)
         }).then((response) => {
             if (response.status === 200) {
-                alertService.save('Saved');
+                AlertService.save('Saved');
                 this.setState({ todoItems: this.state.todoItems });
             } else {
-                alertService.error('Sorry, an error occurred.');
+                AlertService.error('Sorry, an error occurred.');
             }
         });
     }
@@ -74,7 +73,7 @@ export class ToDo extends React.Component {
             body: JSON.stringify(item)
         }).then((response) => {
             if (response.status === 200) {
-                alertService.save('Deleted');
+                AlertService.save('Deleted');
 
                 let index = this.state.todoItems.map(x => x.id).indexOf(item.id);
                 console.log(this.state.todoItems);
@@ -82,7 +81,7 @@ export class ToDo extends React.Component {
 
                 this.setState({ todoItems: this.state.todoItems });
             } else {
-                alertService.error('Sorry, an error occurred.');
+                AlertService.error('Sorry, an error occurred.');
             }
         });
     }

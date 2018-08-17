@@ -3,8 +3,8 @@ import { AlertService } from '../services/AlertService';
 import { HttpService } from '../services/HttpService';
 import { UserForm } from "./UserForm";
 
-export class Login extends Component {
-    displayName = Login.name
+export class Register extends Component {
+    displayName = Register.name
 
     constructor(props) {
         super(props);
@@ -12,14 +12,14 @@ export class Login extends Component {
 
     handleSubmit = async (event, state) => {
         event.preventDefault();
-        
-        return HttpService.post(`/api/User/Login`, state)
+
+        return HttpService.post(`/api/User/Register`, state)
             .then((response) => {
                 if (!response.is_error && response.content.token) {
                     sessionStorage.setItem('JWT', response.content.token);
                     window.location.href = '/about';
                 } else {
-                    AlertService.error('Username or password is incorrect.');
+                    //AlertService.error('Username or password is incorrect.');
                 }
                 return response;
             });
@@ -27,7 +27,7 @@ export class Login extends Component {
 
     render() {
         return (
-            <UserForm type="Login" handleSubmit={this.handleSubmit} />
+            <UserForm type="Register" handleSubmit={this.handleSubmit} />
         );
     }
 }

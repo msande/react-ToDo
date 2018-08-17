@@ -27,6 +27,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="ClientApp\src\services\HttpService.js" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Content Update="appsettings.Development.json">
       <DependentUpon>appsettings.json</DependentUpon>
     </Content>
@@ -43,7 +47,12 @@
 
   <ItemGroup>
     <Folder Include="Data\" />
+    <Folder Include="Logs\" />
     <Folder Include="Migrations\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <TypeScriptCompile Include="ClientApp\src\services\HttpService.js" />
   </ItemGroup>
 
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">

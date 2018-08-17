@@ -4,22 +4,18 @@ import 'react-s-alert/dist/s-alert-default.css';
 import 'react-s-alert/dist/s-alert-css-effects/jelly.css';
 
 export class AlertService extends React.Component {
-    
-    constructor(props) {
-        super(props);
 
-        this.options = {
-            position: 'bottom-right',
-            effect: 'jelly',
-            timeout: 1000
-        }
+    static options = {
+        position: 'bottom-right',
+        effect: 'jelly',
+        timeout: 1000
     }
 
-    save(message) {
+    static save(message) {
         Alert.success(message, this.options);
     }
 
-    error(message) {
+    static error(message) {
         Alert.error(message, this.options);
     }
 

@@ -1,12 +1,13 @@
 import React, { Component } from 'react';
+import { User } from '../services/UserService';
 
-export class Home extends Component {
-    displayName = Home.name
-    
+export class About extends Component {
+    displayName = About.name
+
     render() {
         return (
             <div>
-                <h1>Hello</h1>
+                <h1>Hello {User.info().sub}</h1>
                 <p className="sub-title">and welcome to the over complex ToDo react app</p>
                 <p>What this project includes:</p>
                 <ul>
@@ -31,6 +32,8 @@ export class Home extends Component {
                     <li>Get working on old ie</li>
                     <li>Reorder items</li>
                     <li>Clean up C# namespaces</li>
+                    <li>Customize HTTP service</li>
+                    <li>Cleanup/Remove js imports</li>
                     <li>___</li>
                 </ul>
             </div>

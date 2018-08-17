@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System;
+using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -17,18 +18,18 @@ namespace ToDo.Controllers
     {
         private readonly ILogger<ToDoController> _logger;
         private readonly ApplicationDbContext _context;
-        private readonly UserManager<MyIdentityUser> _userManager;
+        private readonly UserManager<IdentityUser> _userManager;
         private readonly IOptions<IdentityOptions> _identityOptions;
         private readonly JwtOptions _jwtOptions;
-        private readonly SignInManager<MyIdentityUser> _signInManager;
+        private readonly SignInManager<IdentityUser> _signInManager;
 
         public UserController(
             ILogger<ToDoController> logger,
             ApplicationDbContext context,
-            UserManager<MyIdentityUser> userManager,
+            UserManager<IdentityUser> userManager,
             IOptions<IdentityOptions> identityOptions,
             IOptions<JwtOptions> jwtOptions,
-            SignInManager<MyIdentityUser> signInManager)
+            SignInManager<IdentityUser> signInManager)
         {
             _logger = logger;
             _context = context;
@@ -39,10 +40,42 @@ namespace ToDo.Controllers
         }
 
         [HttpPost("[action]")]
+        public async Task<IActionResult> Register([FromBody]User userModel)
+        {
+            var user = await _userManager.FindByNameAsync(userModel.Username);
+            if (user != null)
+            {
+                return BadRequest(new
+                {
+                    error = "This user already exists."
+                });
+            }
+            else
+            {
+                IdentityUser newUser = new IdentityUser();
+                newUser.UserName = userModel.Username;
+                //newUser.Email = userModel.Email;
+
+                IdentityResult result = _userManager.CreateAsync(newUser, userModel.Password).Result;
+
+                if (result.Succeeded)
+                {
+                    _userManager.AddToRoleAsync(newUser, "User").Wait();
+                    return await Login(userModel);
+                }
+            }
+
+            return BadRequest(new
+            {
+                error = "Sorry, an error occurred."
+            });
+        }
+
+        [HttpPost("[action]")]
         public async Task<IActionResult> Login([FromBody]User userModel)
         {
             // Ensure the username and password is valid.
-            var user = await _userManager.FindByNameAsync(userModel.Email);
+            var user = await _userManager.FindByNameAsync(userModel.Username);
             if (user == null || !await _userManager.CheckPasswordAsync(user, userModel.Password))
             {
                 return BadRequest(new
@@ -62,14 +95,20 @@ namespace ToDo.Controllers
                 });
             }*/
 
+
             _logger.LogInformation($"User logged in (id: {user.Id})");
 
             // Generate and issue a JWT token
-            var claims = new[] {
-                new Claim(ClaimTypes.Name, user.Email),
-                new Claim(JwtRegisteredClaimNames.Sub, user.Email),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
-            };
+            List<Claim> claims = new List<Claim>();
+            claims.Add(new Claim(ClaimTypes.Name, user.UserName));
+            claims.Add(new Claim(JwtRegisteredClaimNames.Sub, user.UserName));
+            claims.Add(new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()));
+            
+            var roles = await _userManager.GetRolesAsync(user);
+            foreach (var role in roles)
+            {
+                claims.Add(new Claim("roles", role));
+            }
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtOptions.Key));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
