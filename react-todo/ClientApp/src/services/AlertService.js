@@ -2,12 +2,14 @@ import React from 'react';
 import Alert from 'react-s-alert';
 import 'react-s-alert/dist/s-alert-default.css';
 import 'react-s-alert/dist/s-alert-css-effects/jelly.css';
+import 'react-s-alert/dist/s-alert-css-effects/stackslide.css';
+import { isMobile } from 'react-device-detect';
 
 export class AlertService extends React.Component {
-    
+
     static options = {
-        position: 'bottom-right',
-        effect: 'jelly',
+        position: (isMobile ? 'top' : 'bottom-right'),
+        effect: (isMobile ? 'stackslide' : 'jelly'),
         timeout: 1000
     }
 
@@ -20,8 +22,8 @@ export class AlertService extends React.Component {
     }
 
     render() {
-        return(
-            <Alert stack={{ limit: 2 }} />
+        return (
+            <Alert stack={{ limit: (isMobile ? 1 : 2) }} />
         )
     }
 }

@@ -1,11 +1,8 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { AlertService } from '../services/AlertService';
-import { NotificationService } from '../services/NotificationService';
 import { v4 } from 'uuid';
 import { HttpService } from '../services/HttpService';
 import { UserService } from '../services/UserService';
-
-const notificationService = new NotificationService();
 
 export class ToDo extends React.Component {
     displayName = ToDo.name
@@ -21,8 +18,7 @@ export class ToDo extends React.Component {
     
     add() {
         let newGuid = v4();
-        this.state.todoItems = [...this.state.todoItems, { id: newGuid, name: '' }];
-        this.setState({ todoItems: this.state.todoItems });
+        this.setState({ todoItems: [...this.state.todoItems, { id: newGuid, name: '' }]});
     }
 
     async load() {

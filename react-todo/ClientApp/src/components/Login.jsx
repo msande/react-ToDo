@@ -6,10 +6,10 @@ import { StorageService } from "../services/StorageService";
 
 export class Login extends Component {
     displayName = Login.name
-    
+
     handleSubmit = async (event, state) => {
         event.preventDefault();
-        
+
         return HttpService.post(`/api/User/Login`, state)
             .then((response) => {
                 if (!response.error && response.data.token) {
