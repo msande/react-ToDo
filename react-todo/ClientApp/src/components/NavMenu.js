@@ -1,20 +1,14 @@
-﻿import React, { Component } from 'react';
-import { Link, Redirect } from 'react-router-dom';
+﻿import React from 'react';
+import { Link } from 'react-router-dom';
 import { Glyphicon, Nav, Navbar, NavItem } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
-import { User } from '../services/UserService';
-import { withRouter } from 'react-router-dom'
-import { setTimeout } from 'timers';
+import { UserService } from '../services/UserService';
 
-export class NavMenu extends Component {
+export class NavMenu extends React.Component {
     displayName = NavMenu.name
-
-    constructor(props) {
-        super(props);
-    }
-
+    
     renderItems = () => {
-        if (User.info()) {
+        if (UserService.info()) {
             return this.renderLoggedInItems();
         } else {
             return this.renderLoggedOutItems();

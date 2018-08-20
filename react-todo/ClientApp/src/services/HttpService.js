@@ -1,39 +1,24 @@
-
-export class IErrorContent {
-    error;
-    error_description;
-    key;
-}
-
-export class IRestResponse {
-    is_error;
-    error_content;
-    content;
-};
-
-export class IAuthResponse {
-    token;
-}
+import { StorageService } from "./StorageService";
 
 export class HttpService {
 
-    //static get<T>(url: string): Promise<IRestResponse<T>> {
-    //    return HttpService.request<T>('GET', url);
-    //}
+    static get(url) {
+        return HttpService.request('GET', url);
+    }
 
     static post(url, data) {
         return HttpService.request('POST', url, data);
     }
 
     static request(method, url, data) {
-        
-        let isJsonResponse = false;
         let isBadRequest = false;
         let body = data;
         let headers = new Headers();
 
-        if (sessionStorage.getItem('JWT')) {
-            headers.set('Authorization', `Bearer ${sessionStorage.getItem('JWT')}`);
+        let jwt = StorageService.getJWTKey();
+
+        if (jwt) {
+            headers.set('Authorization', `Bearer ${jwt}`);
         }
 
         headers.set('Accept', 'application/json');
@@ -46,37 +31,32 @@ export class HttpService {
                 headers.set('Content-Type', 'application/x-www-form-urlencoded');
             }
         }
-
-
+        
         return fetch(url, {
             method: method,
             headers: headers,
             body: body
         }).then((response) => {
-            
-            if (response.status == 401) {
-                // Unauthorized; redirect to sign-in
-                sessionStorage.removeItem('JWT');
+
+            // check if unauthorized
+            if (response.status === 401) {
+                StorageService.removeJWTKey();
                 window.location.href = `/?expired=1`;
             }
 
-            isBadRequest = (response.status == 400);
+            isBadRequest = (response.status === 400);
 
             let responseContentType = response.headers.get("content-type");
             if (responseContentType && responseContentType.indexOf("application/json") !== -1) {
-                isJsonResponse = true;
                 return response.json();
             } else {
                 return response.text();
             }
-            //debugger;
         }).then((responseContent) => {
             let response = {
-                is_error: isBadRequest,
-                error_content: isBadRequest ? responseContent : null,
-                content: isBadRequest ? null : responseContent
+                error: isBadRequest,
+                data: responseContent
             };
-            //debugger;
             return response;
         });
     }

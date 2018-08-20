@@ -184,6 +184,8 @@ namespace reacttodo.Migrations
 
                     b.Property<int>("SortOrder");
 
+                    b.Property<string>("UserId");
+
                     b.HasKey("Id");
 
                     b.ToTable("ToDoItems");

@@ -51,6 +51,7 @@ namespace reacttodo.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(nullable: false),
+                    UserId = table.Column<string>(nullable: true),
                     Name = table.Column<string>(nullable: true),
                     SortOrder = table.Column<int>(nullable: false),
                     IsDeleted = table.Column<bool>(nullable: false)

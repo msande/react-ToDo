@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { User } from '../services/UserService';
+import { UserService } from '../services/UserService';
 
 export class About extends Component {
     displayName = About.name
@@ -7,13 +7,13 @@ export class About extends Component {
     render() {
         return (
             <div>
-                <h1>Hello {User.info().sub}</h1>
+                <h1>Hello {UserService.info().sub}</h1>
                 <p className="sub-title">and welcome to the over complex ToDo react app</p>
                 <p>What this project includes:</p>
                 <ul>
                     <li>ASP.NET Core and C# for cross-platform server-side code</li>
                     <li>React for client-side code</li>
-                    <li>SASS for layout and styling -- to do </li>
+                    <li>SASS for layout and styling</li>
                     <li>Logging with NLog</li>
                     <li>Entity Framework and MySQL</li>
                     <li>HTML5 Browser Notifications</li>
@@ -21,8 +21,6 @@ export class About extends Component {
 
                 ToDo:
                 <ul>
-                    <li>Make http calls into service: https://github.com/bradymholt/aspnet-core-react-template/blob/master/client-react/services/RestUtilities.ts </li>
-                    <li>OAuth</li>
                     <li>SASS / style</li>
                     <li>Edit/Delete ToDoItems</li>
                     <li>Browser Notifications when reminders are hit</li>

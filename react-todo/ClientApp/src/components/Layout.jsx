@@ -1,15 +1,15 @@
 import React, { Component } from 'react';
 import { Col, Grid, Row } from 'react-bootstrap';
 import { NavMenu } from './NavMenu';
-import { Link, Redirect } from 'react-router-dom';
-import { User } from '../services/UserService';
+import { UserService } from '../services/UserService';
+import { StorageService } from '../services/StorageService';
 
 export class Layout extends Component {
     displayName = Layout.name
     
     logout = event => {
         event.preventDefault();
-        sessionStorage.removeItem('JWT');
+        StorageService.removeJWTKey();
         window.location.href = '/login';
     }
 
@@ -23,7 +23,7 @@ export class Layout extends Component {
                             <NavMenu />
                         </Col>
                         <Col sm={9}>
-                            {User.info() ? <a href="#" onClick={this.logout}>Logout</a> : ''}
+                            {UserService.info() ? <button onClick={this.logout}>Logout</button> : ''}
                             {this.props.children}
                         </Col>
                     </Row>

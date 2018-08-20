@@ -23,6 +23,15 @@ namespace ToDo.Controllers
         private readonly JwtOptions _jwtOptions;
         private readonly SignInManager<IdentityUser> _signInManager;
 
+        /// <summary>
+        /// User Controller
+        /// </summary>
+        /// <param name="logger"></param>
+        /// <param name="context"></param>
+        /// <param name="userManager"></param>
+        /// <param name="identityOptions"></param>
+        /// <param name="jwtOptions"></param>
+        /// <param name="signInManager"></param>
         public UserController(
             ILogger<ToDoController> logger,
             ApplicationDbContext context,
@@ -39,12 +48,21 @@ namespace ToDo.Controllers
             _signInManager = signInManager;
         }
 
+        /// <summary>
+        /// User registration
+        /// </summary>
+        /// <param name="userModel"></param>
+        /// <returns></returns>
         [HttpPost("[action]")]
         public async Task<IActionResult> Register([FromBody]User userModel)
         {
+            _logger.LogInformation("User Registration: {Username}", userModel.Username);
+
             var user = await _userManager.FindByNameAsync(userModel.Username);
             if (user != null)
             {
+                _logger.LogError("{Username} already exists", userModel.Username);
+
                 return BadRequest(new
                 {
                     error = "This user already exists."
@@ -54,16 +72,18 @@ namespace ToDo.Controllers
             {
                 IdentityUser newUser = new IdentityUser();
                 newUser.UserName = userModel.Username;
-                //newUser.Email = userModel.Email;
 
                 IdentityResult result = _userManager.CreateAsync(newUser, userModel.Password).Result;
 
                 if (result.Succeeded)
                 {
+                    _logger.LogInformation("Create User: {Username}", userModel.Username);
                     _userManager.AddToRoleAsync(newUser, "User").Wait();
                     return await Login(userModel);
                 }
             }
+
+            _logger.LogError("User Registration Error: {Username}", userModel.Username);
 
             return BadRequest(new
             {
@@ -71,35 +91,33 @@ namespace ToDo.Controllers
             });
         }
 
+        /// <summary>
+        /// User login
+        /// </summary>
+        /// <param name="userModel"></param>
+        /// <returns></returns>
         [HttpPost("[action]")]
         public async Task<IActionResult> Login([FromBody]User userModel)
         {
+            _logger.LogInformation("User Login: {Username}", userModel.Username);
+
             // Ensure the username and password is valid.
             var user = await _userManager.FindByNameAsync(userModel.Username);
             if (user == null || !await _userManager.CheckPasswordAsync(user, userModel.Password))
             {
+                _logger.LogError("Username or password invalid: {Username}", userModel.Username);
+
                 return BadRequest(new
                 {
-                    error = "", //OpenIdConnectConstants.Errors.InvalidGrant,
-                    error_description = "The username or password is invalid."
+                    error = "The username or password is invalid."
                 });
             }
-
-            // Ensure the email is confirmed.
-            /*if (!await _userManager.IsEmailConfirmedAsync(user))
-            {
-                return BadRequest(new
-                {
-                    error = "email_not_confirmed",
-                    error_description = "You must have a confirmed email to log in."
-                });
-            }*/
-
-
+            
             _logger.LogInformation($"User logged in (id: {user.Id})");
 
             // Generate and issue a JWT token
             List<Claim> claims = new List<Claim>();
+            claims.Add(new Claim(ClaimTypes.NameIdentifier, user.Id));
             claims.Add(new Claim(ClaimTypes.Name, user.UserName));
             claims.Add(new Claim(JwtRegisteredClaimNames.Sub, user.UserName));
             claims.Add(new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()));

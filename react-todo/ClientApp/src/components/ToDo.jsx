@@ -2,11 +2,14 @@ import React, { Component } from 'react';
 import { AlertService } from '../services/AlertService';
 import { NotificationService } from '../services/NotificationService';
 import { v4 } from 'uuid';
+import { HttpService } from '../services/HttpService';
+import { UserService } from '../services/UserService';
 
 const notificationService = new NotificationService();
 
 export class ToDo extends React.Component {
     displayName = ToDo.name
+    userId = UserService.info().UserId;
 
     constructor(props) {
         super(props);
@@ -15,7 +18,7 @@ export class ToDo extends React.Component {
         this.add = this.add.bind(this);
         this.load();
     }
-
+    
     add() {
         let newGuid = v4();
         this.state.todoItems = [...this.state.todoItems, { id: newGuid, name: '' }];
@@ -23,67 +26,46 @@ export class ToDo extends React.Component {
     }
 
     async load() {
-
-        let headers = new Headers();
-        headers.set('Authorization', `Bearer ${sessionStorage.getItem('JWT')}`);
-        headers.set('Accept', 'application/json');
-        headers.set('Content-Type', 'application/json');
-
-        await fetch('api/ToDo/GetItems', {
-            headers: headers
-        }).then(response => response.json())
-        .then(data => {
-            this.setState({ todoItems: data, loading: false });
+        HttpService.get(`api/ToDo/GetItems/`).then((response) => {
+            if (!response.error && response.data) {
+                this.setState({ todoItems: response.data, loading: false });
+            } else {
+                AlertService.error(response.data.error);
+            }
         });
     }
 
     async save(finditem) {
-
-        let headers = new Headers();
-        headers.set('Authorization', `Bearer ${sessionStorage.getItem('JWT')}`);
-        headers.set('Accept', 'application/json');
-        headers.set('Content-Type', 'application/json');
-        debugger;
-        await fetch('api/ToDo/Save', {
-            method: 'POST',
-            headers: headers,
-            body: JSON.stringify(finditem)
-        }).then((response) => {
-            if (response.status === 200) {
-                AlertService.save('Saved');
-                this.setState({ todoItems: this.state.todoItems });
-            } else {
-                AlertService.error('Sorry, an error occurred.');
-            }
-        });
+        return HttpService.post(`/api/ToDo/Save`, finditem)
+            .then((response) => {
+                if (!response.error) {
+                    AlertService.save('Saved');
+                } else {
+                    AlertService.error(response.data.error);
+                }
+                return response;
+            });
     }
 
     delete(item) {
+        
         let finditem = this.state.todoItems.find(x => x.id === item.id);
         finditem.isDeleted = true;
 
-        let headers = new Headers();
-        headers.set('Authorization', `Bearer ${sessionStorage.getItem('JWT')}`);
-        headers.set('Accept', 'application/json');
-        headers.set('Content-Type', 'application/json');
+        HttpService.post(`/api/ToDo/Delete`, item)
+            .then((response) => {
+                if (!response.error) {
+                    AlertService.save('Deleted');
 
-        fetch('api/ToDo/Delete', {
-            method: 'POST',
-            headers: headers,
-            body: JSON.stringify(item)
-        }).then((response) => {
-            if (response.status === 200) {
-                AlertService.save('Deleted');
+                    let index = this.state.todoItems.map(x => x.id).indexOf(item.id);
+                    console.log(this.state.todoItems);
+                    this.state.todoItems.splice(index, 1)
 
-                let index = this.state.todoItems.map(x => x.id).indexOf(item.id);
-                console.log(this.state.todoItems);
-                this.state.todoItems.splice(index, 1)
-
-                this.setState({ todoItems: this.state.todoItems });
-            } else {
-                AlertService.error('Sorry, an error occurred.');
-            }
-        });
+                    this.setState({ todoItems: this.state.todoItems });
+                } else {
+                    AlertService.error(response.data.error);
+                }
+            });
     }
 
     async handleBlur(event) {
@@ -91,13 +73,14 @@ export class ToDo extends React.Component {
         let finditem = this.state.todoItems.find(x => x.id === event.currentTarget.id);
         let newName = String.prototype.trim.call(event.currentTarget.value);
 
-        if (finditem.name === newName) {
-            return;
-        }
+        if (finditem.name === newName) return;
 
         finditem.name = newName;
 
-        await this.save(finditem);
+        let response = await this.save(finditem);
+        if (!response.error) {
+            this.setState({ todoItems: this.state.todoItems });
+        }
     }
 
     handleFocus(event) {

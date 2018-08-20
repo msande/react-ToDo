@@ -9,7 +9,7 @@ using ToDo.Models;
 namespace reacttodo.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20180816163516_ApplicationDbContexttMigration")]
+    [Migration("20180820175812_ApplicationDbContexttMigration")]
     partial class ApplicationDbContexttMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -185,6 +185,8 @@ namespace reacttodo.Migrations
                     b.Property<string>("Name");
 
                     b.Property<int>("SortOrder");
+
+                    b.Property<string>("UserId");
 
                     b.HasKey("Id");
 

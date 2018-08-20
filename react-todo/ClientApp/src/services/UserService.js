@@ -1,12 +1,10 @@
-import React, { Component } from 'react';
 import decode from 'jwt-decode'
+import { StorageService } from './StorageService';
 
-export class User extends React.Component {
+export class UserService {
 
-    //test = '123123';
-    //static token = sessionStorage.getItem('JWT');
     static info() {
-        let token = sessionStorage.getItem('JWT');
+        let token = StorageService.getJWTKey();
         if (token) {
             return decode(token);
         } else {
@@ -15,7 +13,6 @@ export class User extends React.Component {
     }
 
     static isInRole(role) {
-        debugger;
         let roles = this.info().roles;
         for (let i = 0; i < roles.length; i++) {
             if (roles[i] === role) {
@@ -24,20 +21,4 @@ export class User extends React.Component {
         }
         return false;
     }
-
-    /*constructor(props) {
-        super(props);
-        debugger;
-        let token = sessionStorage.getItem('JWT');
-        //debugger;
-        if (token) {
-            //let o = decode(token);
-            let user = decode(token);
-            if (user.roles['Administrator']) {
-                debugger;
-            }
-            debugger;
-        }
-
-    }*/
 }

@@ -9,7 +9,6 @@ import { AlertService } from './services/AlertService';
 import { NotificationService } from './services/NotificationService';
 import './App.min.css';
 import PrivateRoute from './components/PrivateRoute';
-import { UserForm } from './components/UserForm';
 
 const notificationService = new NotificationService();
 
